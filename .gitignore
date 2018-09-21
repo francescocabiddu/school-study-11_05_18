@@ -45,3 +45,9 @@ rsconnect/
 *.Rproj
 
 images/
+
+*.csv
+
+*.txt
+
+stimuli.R
