@@ -1,0 +1,365 @@
+---
+title: "School Study Results"
+output:
+  word_document:
+    reference_docx: template.docx
+  pdf_document: default
+
+---
+
+Date: `r Sys.Date()`
+
+<br>
+
+<!-- loading packages, user-defined functions and datasets -->
+```{r echo=FALSE, warning=FALSE, message=FALSE, cache=FALSE, include=FALSE}
+libs <- c("dplyr", "magrittr", "tidyr", "stringr", "knitr")
+lapply(libs, require, character.only = TRUE)
+load(file="ws_11_5_18.RData")
+```
+
+<br>
+
+#### Table
+Digits and Words lists
+
+```{r echo=FALSE}
+span_nw_df %>%
+  group_by(seq) %>%
+  filter(row_number(seq) == 1) %>%
+  select(List = list, Length = len_seq, Sequence = seq) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Demographic information of the sample
+
+```{r echo=FALSE}
+span_nw_df %>%
+  group_by(id) %>%
+  filter(row_number(id) == 1) %>%
+  ungroup() %>%
+  summarize(N = n(), 
+            `M (age months)` = mean(age_month), 
+            `SD (age months)`=sd(age_month),
+            `M (age years)` = mean(age_month)/12, 
+            `SD (age years)`=sd(age_month)/12) %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE}
+span_nw_df %>%
+  group_by(id) %>%
+  filter(row_number(id) == 1) %>%
+  group_by(gender) %>%
+  summarize(N = n()) %>%
+  select(Gender = gender, N) %>%
+  kable()
+```
+
+<br>
+
+## Comparison of Digits and Words lists
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of digit and word span size (length of longest list accurately recalled)
+
+<br>
+
+```{r echo=FALSE}
+span_size_nw %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of total digit and word span (number of lists accurately recalled)  
+
+<br>
+
+```{r echo=FALSE}
+span_tot_nw %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of digit span advantage (digit span size minus word span size) as a function of span length
+
+<br>
+
+```{r echo=FALSE}
+span_size_diff_nw %>%
+  select(digits, N, M:`upper_CI_95%`) %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+
+
+<br>
+
+#### Table
+Mixed1 and Mixed2 lists
+
+```{r echo=FALSE}
+span_mix_df %>%
+  group_by(seq) %>%
+  filter(row_number(seq) == 1) %>%
+  select(List = list, Length = len_seq, Sequence = seq) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Demographic information of the sample
+
+```{r echo=FALSE}
+span_mix_df %>%
+  group_by(id) %>%
+  filter(row_number(id) == 1) %>%
+  ungroup() %>%
+  summarize(N = n(), 
+            `M (age months)` = mean(age_month), 
+            `SD (age months)`=sd(age_month),
+            `M (age years)` = mean(age_month)/12, 
+            `SD (age years)`=sd(age_month)/12) %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE}
+span_mix_df %>%
+  group_by(id) %>%
+  filter(row_number(id) == 1) %>%
+  group_by(gender) %>%
+  summarize(N = n()) %>%
+  select(Gender = gender, N) %>%
+  kable()
+```
+
+<br>
+
+## Comparison of Mixed1 and Mixed2 lists
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of Mixed1 and Mixed2 span size (length of longest list accurately recalled)
+
+<br>
+
+```{r echo=FALSE}
+span_size_mix %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of total Mixed1 and Mixed2 span (number of lists accurately recalled)  
+
+<br>
+
+```{r echo=FALSE}
+span_tot_mix %>%
+  round_df(2) %>%
+  kable()
+```
+
+```{r echo=FALSE}
+#### Table
+#Mean, Standard deviation and 95% confidence interval of digit span advantage (Mixed1 span size minus Mixed2 #span size) as a function of span length
+
+#span_size_diff_mix %>%
+#  select(mixed1, N, M:`upper_CI_95%`) %>%
+#  round_df(2) %>%
+#  kable()
+```
+
+<br>
+
+## Span Size and Span Tot for mixed lists at each age
+Rounded age in years was considered. Ages 6 and 7 were grouped together due to a small number of cases in year 7. The same procedure was followed for ages 10 and 11 (small numbers of cases in year 11).
+
+<br>
+
+#### Span size
+
+<br> 
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of Mixed1 and Mixed2 span size (length of longest list accurately recalled). *Age 6 and 7 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_size_mix67 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of Mixed1 and Mixed2 span size (length of longest list accurately recalled). *Age 8 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_size_mix8 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of Mixed1 and Mixed2 span size (length of longest list accurately recalled). *Age 10 and 11 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_size_mix1011 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Span Tot
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of total Mixed1 and Mixed2 span (number of lists accurately recalled). *Age 6 and 7 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_tot_mix67 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of total Mixed1 and Mixed2 span (number of lists accurately recalled). *Age 8 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_tot_mix8 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of total Mixed1 and Mixed2 span (number of lists accurately recalled). *Age 10 and 11 considered*.
+
+<br>
+
+```{r echo=FALSE}
+span_tot_mix1011 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+## Proportion of accurate recall
+
+<br>
+
+#### Table
+Proportion of accurate recall of isolated digits, isolated words, digit pairs, and word pairs for the final four span lists of each participant (not considering stimuli order of response).
+
+```{r echo=FALSE}
+span_mix_prop_all %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+Notes: 
+
+* when a triplet occurs (e.g. "house water bear"), two pairs are considered (e.g. "house water" and "water bear"). The same procedure has been followed for digits;
+
+* a pair (e.g. "bear cup") is considered learned only if the two elements were recalled together. For example, in the sequence "4 bear cup water 6", the pair "bear cup" has been considered learned in "4 water bear cup 6" but not in "4 bear water cup 6";
+
+* to calculate the proportion of accurate recall, lists mixed1 and mixed2 are considered together;
+
+* if at a particular length (e.g. length 5), only one of the two sequences is recalled (e.g. 5b but not 5a for which an empty response has been given), the last 4 final lists considered were 6b, 6a, 5b, 4b. 
+
+<br>
+
+## Proportion of accurate recall (by age)
+
+For the following tables, three age groups where arbitrary chosen (from 5 to 7 years, from 7 to 9, from 9 to 11).
+
+<br>
+
+#### Table
+Size of each age group
+
+```{r echo=FALSE}
+age_table %>%
+  summarize(`5_7`= sum(age_month/12 < 7),
+            `7_9` = sum(age_month/12 > 7 & age_month/12 < 9),
+            `9_11` = sum(age_month/12 > 9)) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Proportion of accurate recall for age group 5 to 7
+
+```{r echo=FALSE}
+span_mix_prop57 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Proportion of accurate recall for age group 7 to 9
+
+```{r echo=FALSE}
+span_mix_prop79 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+#### Table
+Proportion of accurate recall for age group 9 to 11
+
+```{r echo=FALSE}
+span_mix_prop911 %>%
+  round_df(2) %>%
+  kable()
+```
