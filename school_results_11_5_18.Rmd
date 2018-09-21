@@ -13,12 +13,19 @@ Date: `r Sys.Date()`
 
 <!-- loading packages, user-defined functions and datasets -->
 ```{r echo=FALSE, warning=FALSE, message=FALSE, cache=FALSE, include=FALSE}
-libs <- c("dplyr", "magrittr", "tidyr", "stringr", "knitr")
+libs <- c("dplyr", "magrittr", "tidyr", "stringr", "knitr", 'ggplot2')
 lapply(libs, require, character.only = TRUE)
-load(file="ws_11_5_18.RData")
+load(file="ws_21_09_18.RData")
 ```
 
 <br>
+
+<!-- set folder for graphs -->
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "images/"
+)
+```
 
 #### Table
 Digits and Words lists
@@ -94,6 +101,31 @@ span_tot_nw %>%
 
 <br>
 
+```{r echo=FALSE, fig.width=7, fig.height=5}
+ggplot(span_size_nw_raw, aes(x=age_month, y=span_size, shape = list))+
+  geom_jitter(height = 0.25, width = 0.25) +
+  ggtitle('Span size by age') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Age in months", y = "Span size", shape = "List") +
+  scale_shape_manual(labels = c("Digits", "Words"), values = c(0, 3)) 
+```
+**Figure 1.** Span size by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting)
+
+<br>
+
+```{r echo=FALSE, fig.width=7, fig.height=5}
+ggplot(span_tot_nw_raw, aes(x=age_month, y=span_tot, shape = list))+
+  geom_jitter(height = 0.25, width = 0.25) +
+  ggtitle('Total Span by age') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Age in months", y = "Total Span", shape = "List") +
+  scale_shape_manual(labels = c("Digits", "Words"), values = c(0, 3)) +
+  scale_y_continuous(limits=c(3, 13), breaks=seq(3, 13, by = 1))
+```
+**Figure 2.** Span tot by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting)
+
+<bt>
+
 #### Table
 Mean, Standard deviation and 95% confidence interval of digit span advantage (digit span size minus word span size) as a function of span length
 
@@ -107,8 +139,6 @@ span_size_diff_nw %>%
 ```
 
 <br>
-
-
 
 <br>
 

@@ -8,7 +8,8 @@ source("homemade_funs.R")
 #### Dig&Wor ####
 ### clean df span num&words ###
 # load df
-span_nw_df <- read.delim("Span Test schools_num&words_24_03_18_1 May 2018_16.04.csv", sep=",", header=F, stringsAsFactors = F, check.names = F)
+span_nw_df <- read.delim("Span Test schools_num&words_24_03_18_1 May 2018_16.04.csv", sep=",", 
+                         header=F, stringsAsFactors = F, check.names = F)
 
 # set colnames
 colnames(span_nw_df) <- span_nw_df[1,]
@@ -102,6 +103,10 @@ span_size_nw <- span_nw_df %>%
   group_by(id, list) %>%
   summarize(span_size = len_seq[length(len_seq)])
 
+# save raw span size digits/words for scatterplot by age
+span_size_nw_raw <- span_size_nw %>%
+  inner_join(age_table, span_size_nw, by = c("id"))
+  
 `CI_95%` <- ci.mean(span_size~list, data=span_size_nw, normal = F)
 
 span_size_nw %<>%
@@ -116,6 +121,10 @@ span_tot_nw <- span_nw_df %>%
   filter(corr_list == TRUE) %>%
   group_by(id, list) %>%
   summarize(span_tot = length(unique(seq)))
+
+# save raw span tot digits/words for scatterplot by age
+span_tot_nw_raw <- span_tot_nw %>%
+  inner_join(age_table, span_tot_nw, by = c("id"))
 
 `CI_95%` <- ci.mean(span_tot~list, data=span_tot_nw, normal = F)
 
