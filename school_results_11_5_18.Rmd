@@ -102,27 +102,31 @@ span_tot_nw %>%
 <br>
 
 ```{r echo=FALSE, fig.width=7, fig.height=5}
-ggplot(span_size_nw_raw, aes(x=age_month, y=span_size, shape = list))+
+ggplot(span_size_nw_raw, aes(x=age_month, y=span_size, shape = list, linetype = list))+
   geom_jitter(height = 0.25, width = 0.25) +
   ggtitle('Span size by age') +
   theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Age in months", y = "Span size", shape = "List") +
-  scale_shape_manual(labels = c("Digits", "Words"), values = c(0, 3)) 
+  labs(x = "Age in months", y = "Span size") +
+  geom_smooth(method='lm', colour = 'black', size = 0.3) +
+  scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
+  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
 ```
-**Figure 1.** Span size by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting)
+**Figure 1.** Span size by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added.
 
 <br>
 
 ```{r echo=FALSE, fig.width=7, fig.height=5}
-ggplot(span_tot_nw_raw, aes(x=age_month, y=span_tot, shape = list))+
+ggplot(span_tot_nw_raw, aes(x=age_month, y=span_tot, shape = list, linetype = list))+
   geom_jitter(height = 0.25, width = 0.25) +
   ggtitle('Total Span by age') +
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(x = "Age in months", y = "Total Span", shape = "List") +
-  scale_shape_manual(labels = c("Digits", "Words"), values = c(0, 3)) +
-  scale_y_continuous(limits=c(3, 13), breaks=seq(3, 13, by = 1))
+  scale_y_continuous(limits=c(3, 13), breaks=seq(3, 13, by = 1))+ 
+  geom_smooth(method='lm', colour = 'black', size = 0.3) +
+  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) +
+  scale_shape_manual(labels = c("Digits", "Words"), values = c(0, 3))
 ```
-**Figure 2.** Span tot by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting)
+**Figure 2.** Span tot by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added.
 
 <bt>
 
