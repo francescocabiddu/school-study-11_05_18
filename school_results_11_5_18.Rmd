@@ -13,7 +13,9 @@ Date: `r Sys.Date()`
 
 <!-- loading packages, user-defined functions and datasets -->
 ```{r echo=FALSE, warning=FALSE, message=FALSE, cache=FALSE, include=FALSE}
-libs <- c("dplyr", "magrittr", "tidyr", "stringr", "knitr", 'ggplot2')
+libs <- c("dplyr", "magrittr", "tidyr", 
+          "stringr", "knitr", 'ggplot2',
+          "lme4", "sjstats", "TMB")
 lapply(libs, require, character.only = TRUE)
 load(file="ws_21_09_18.RData")
 ```
@@ -112,6 +114,52 @@ ggplot(span_size_nw_raw, aes(x=age_month, y=span_size, shape = list, linetype = 
   scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
 ```
 **Figure 1.** Span size by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added.
+
+<br>
+
+#### Table
+Linear mixed-effects model with "Span size" considered as the DV and "stimulus type" (digits or words), "age" and "age * stimulus type" as predictors. Child ID was considered as random effect. In the model, "words" was used as a baseline factor level for IV "stimulus type". P-values were based on conditional F-tests with Kenward-Roger approximation for the degrees of freedom.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+span_size_nw_raw$list %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod <- lmer(span_size ~ list * age_month + (1|id), data = span_size_nw_raw)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod)) %>%
+  cbind(confint(mod) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+  }) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod), icc(mod))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_size_nw_raw %>% nrow(),
+       `Marginal R2` = r2(mod)[[1]],
+       `Conditional R2` = r2(mod)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
 
 <br>
 
