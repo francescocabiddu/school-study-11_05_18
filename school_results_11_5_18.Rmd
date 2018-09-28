@@ -14,7 +14,7 @@ Date: `r Sys.Date()`
 <!-- loading packages, user-defined functions and datasets -->
 ```{r echo=FALSE, warning=FALSE, message=FALSE, cache=FALSE, include=FALSE}
 libs <- c("magrittr", "tidyverse", "knitr",
-          "lme4", "sjstats", "TMB")
+          "lme4", "sjstats", "TMB", "pbkrtest")
 lapply(libs, require, character.only = TRUE)
 load(file="ws_21_09_18.RData")
 ```
@@ -180,7 +180,59 @@ ggplot(span_tot_nw_raw, aes(x=age_month, y=span_tot, shape = list, linetype = li
 ```
 **Figure 2.** Span tot by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added.
 
-<bt>
+<br>
+
+#### Table
+Linear mixed-effects model with "Span Total" considered as the DV and "stimulus type" (digits or words), "age" and "age * stimulus type" as predictors. Child ID was considered as random effect. In the model, "words" was used as a baseline factor level for IV "stimulus type". P-values were based on conditional F-tests with Kenward-Roger approximation for the degrees of freedom.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+span_tot_nw_raw$list %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+span_tot_nw_raw %<>%
+  ungroup() %>%
+  mutate(id = as.character(id))
+
+mod <- lmer(span_tot ~ list * age_month + (1|id), data = span_tot_nw_raw)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod)) %>%
+  cbind(confint(mod) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod), icc(mod))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_nw_raw %>% nrow(),
+       `Marginal R2` = r2(mod)[[1]],
+       `Conditional R2` = r2(mod)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
 
 #### Table
 Mean, Standard deviation and 95% confidence interval of digit span advantage (digit span size minus word span size) as a function of span length
@@ -654,3 +706,162 @@ tibble(Observations = span_size_df_joined %>% nrow(),
   kable()
 ```
 
+<br>
+
+## Span total analyses (Gary's data and joined dataset)
+
+See Span size sections for demographics.
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of digit and word span total (number of lists accurately recalled)  
+
+<br>
+
+```{r echo=FALSE}
+span_tot_nw_2 %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
+ggplot(span_tot_nw_df_2, aes(x=age, y=span_tot, shape = stimulus_type, linetype = stimulus_type))+
+  geom_jitter(height = 0.25, width = 0.25) +
+  ggtitle('Span Total by age') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Age in months", y = "Span size") +
+  geom_smooth(method='lm', colour = 'black', size = 0.3) +
+  scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
+  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
+```
+**Figure 1.** Span Total by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added. 
+
+<br>
+
+#### Table
+Linear mixed-effects model with "Span Total" considered as the DV and "stimulus type" (digits or words), "age" and "age * stimulus type" as predictors. Child ID was considered as random effect. In the model, "words" was used as a baseline factor level for IV "stimulus type". P-values were based on conditional F-tests with Kenward-Roger approximation for the degrees of freedom.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+span_tot_nw_df_2 %<>% na.omit()
+
+span_tot_nw_df_2$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod <- lmer(span_tot ~ stimulus_type * age + (1|id), data = span_tot_nw_df_2)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod)) %>%
+  cbind(confint(mod) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod), icc(mod))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_nw_df_2 %>% select(-sex) %>% na.omit() %>% nrow(),
+       `Marginal R2` = r2(mod)[[1]],
+       `Conditional R2` = r2(mod)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+### Span Total analysis for both datasets joined together
+
+<br>
+
+#### Table
+Mean, Standard deviation and 95% confidence interval of digit and word span total (number of lists accurately recalled)
+
+<br>
+
+```{r echo=FALSE}
+span_tot_nw_joined %>%
+  round_df(2) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
+ggplot(span_tot_df_joined, aes(x=age, y=span_tot, shape = stimulus_type, linetype = stimulus_type))+
+  geom_jitter(height = 0.25, width = 0.25) +
+  ggtitle('Span Total by age') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(x = "Age in months", y = "Span size") +
+  geom_smooth(method='lm', colour = 'black', size = 0.3) +
+  scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
+  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
+```
+**Figure 1.** Span Total by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added. 
+
+<br>
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+span_tot_df_joined %<>% na.omit()
+
+span_tot_df_joined$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod <- lmer(span_tot ~ stimulus_type * age + (1|id), data = span_tot_df_joined)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod)) %>%
+  cbind(confint(mod) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod), icc(mod))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_df_joined %>% nrow(),
+       `Marginal R2` = r2(mod)[[1]],
+       `Conditional R2` = r2(mod)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```

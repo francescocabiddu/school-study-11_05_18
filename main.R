@@ -549,7 +549,7 @@ span_mix_prop911 <- data.frame(Stimulus = c("Isolated digit", "Isolated word",
 
 
 
-#### New dfs ####
+#### New dfs span size ####
 # import new tidy df
 span_nw_df_2 <- "Digit Span and Word Span.csv" %>%
   read_csv() %>%
@@ -589,5 +589,47 @@ span_size_nw_joined <- span_size_df_joined %>%
   group_by(`Stimulus type`) %>%
   summarize(M = mean(span_size), 
             SD = sd(span_size)) %>%
+  mutate(`lower_CI_95%` = `CI_95%`$lower,
+         `upper_CI_95%` = `CI_95%`$upper) ; rm(`CI_95%`)
+
+#### new dfs span total ####
+span_tot_nw_df_2 <- "Digit Span and Word Span.csv" %>%
+  read_csv() %>%
+  select(ID:`Total Digit`, `Total Word`) %T>%
+  {
+    colnames(.) <- c("id", "age", "sex", "digits", "words")
+  } %>%
+  gather(stimulus_type, span_tot, c(digits, words))
+
+# span size (length of longest list accurately recalled)
+`CI_95%` <- ci.mean(span_tot~stimulus_type, data=span_tot_nw_df_2, normal = F)
+
+span_tot_nw_2 <- span_tot_nw_df_2 %>%
+  rename(`Stimulus type` = stimulus_type) %>%
+  group_by(`Stimulus type`) %>%
+  summarize(M = mean(span_tot), 
+            SD = sd(span_tot)) %>%
+  mutate(`lower_CI_95%` = `CI_95%`$lower,
+         `upper_CI_95%` = `CI_95%`$upper) ; rm(`CI_95%`)
+
+# joined df
+span_tot_df_joined <- span_tot_nw_raw %T>%
+{
+  colnames(.) <- c("id", "stimulus_type", "span_tot", "age")
+} %>%
+  select(id, age, stimulus_type, span_tot) %>%
+  ungroup() %>%
+  mutate(id = as.character(id)) %>%
+  rbind(span_tot_nw_df_2 %>%
+          select(-sex))
+
+# span size (length of longest list accurately recalled)
+`CI_95%` <- ci.mean(span_tot~stimulus_type, data=span_tot_df_joined, normal = F)
+
+span_tot_nw_joined <- span_tot_df_joined %>%
+  rename(`Stimulus type` = stimulus_type) %>%
+  group_by(`Stimulus type`) %>%
+  summarize(M = mean(span_tot), 
+            SD = sd(span_tot)) %>%
   mutate(`lower_CI_95%` = `CI_95%`$lower,
          `upper_CI_95%` = `CI_95%`$upper) ; rm(`CI_95%`)
