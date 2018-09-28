@@ -1,5 +1,6 @@
 # load libraries
-libs <- c("dplyr", "magrittr", "tidyr", "stringr", "Publish")
+libs <- c("magrittr", "Publish", "tidyverse",
+          "lme4", "sjstats", "TMB")
 lapply(libs, require, character.only = TRUE)
 
 # load homemade functions
@@ -156,11 +157,6 @@ span_size_diff_nw %<>%
   mutate(`lower_CI_95%` = `CI_95%`$lower,
          `upper_CI_95%` = `CI_95%`$upper,
          N = span_size_diff_nw_N$`n()`) ; rm(`CI_95%`)
-
-            
-
-
-
 
 #### Mixed ####
 # load df
@@ -552,3 +548,46 @@ span_mix_prop911 <- data.frame(Stimulus = c("Isolated digit", "Isolated word",
 
 
 
+
+#### New dfs ####
+# import new tidy df
+span_nw_df_2 <- "Digit Span and Word Span.csv" %>%
+  read_csv() %>%
+  select(ID:Sex, `Longest Digit`, `Longest Word`) %T>%
+  {
+    colnames(.) <- c("id", "age", "sex", "digits", "words")
+  } %>%
+  gather(stimulus_type, span_size, c(digits, words))
+
+# span size (length of longest list accurately recalled)
+`CI_95%` <- ci.mean(span_size~stimulus_type, data=span_nw_df_2, normal = F)
+
+span_size_nw_2 <- span_nw_df_2 %>%
+  rename(`Stimulus type` = stimulus_type) %>%
+  group_by(`Stimulus type`) %>%
+  summarize(M = mean(span_size), 
+            SD = sd(span_size)) %>%
+  mutate(`lower_CI_95%` = `CI_95%`$lower,
+         `upper_CI_95%` = `CI_95%`$upper) ; rm(`CI_95%`)
+
+# joined df
+span_size_df_joined <- span_size_nw_raw %T>%
+{
+  colnames(.) <- c("id", "stimulus_type", "span_size", "age")
+} %>%
+  select(id, age, stimulus_type, span_size) %>%
+  ungroup() %>%
+  mutate(id = as.character(id)) %>%
+    rbind(span_nw_df_2 %>%
+            select(-sex))
+
+# span size (length of longest list accurately recalled)
+`CI_95%` <- ci.mean(span_size~stimulus_type, data=span_size_df_joined, normal = F)
+
+span_size_nw_joined <- span_size_df_joined %>%
+  rename(`Stimulus type` = stimulus_type) %>%
+  group_by(`Stimulus type`) %>%
+  summarize(M = mean(span_size), 
+            SD = sd(span_size)) %>%
+  mutate(`lower_CI_95%` = `CI_95%`$lower,
+         `upper_CI_95%` = `CI_95%`$upper) ; rm(`CI_95%`)
