@@ -730,9 +730,9 @@ span_tot_nw_2 %>%
 ```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
 ggplot(span_tot_nw_df_2, aes(x=age, y=span_tot, shape = stimulus_type, linetype = stimulus_type))+
   geom_jitter(height = 0.25, width = 0.25) +
-  ggtitle('Span Total by age') +
+  ggtitle('Total Span by age') +
   theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Age in months", y = "Span size") +
+  labs(x = "Age in months", y = "Total Span") +
   geom_smooth(method='lm', colour = 'black', size = 0.3) +
   scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
   scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
@@ -810,9 +810,9 @@ span_tot_nw_joined %>%
 ```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
 ggplot(span_tot_df_joined, aes(x=age, y=span_tot, shape = stimulus_type, linetype = stimulus_type))+
   geom_jitter(height = 0.25, width = 0.25) +
-  ggtitle('Span Total by age') +
+  ggtitle('Total Span by age') +
   theme(plot.title = element_text(hjust = 0.5)) +
-  labs(x = "Age in months", y = "Span size") +
+  labs(x = "Age in months", y = "Total Span") +
   geom_smooth(method='lm', colour = 'black', size = 0.3) +
   scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
   scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
