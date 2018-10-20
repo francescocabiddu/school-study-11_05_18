@@ -14,7 +14,7 @@ Date: `r Sys.Date()`
 <!-- loading packages, user-defined functions and datasets -->
 ```{r echo=FALSE, warning=FALSE, message=FALSE, cache=FALSE, include=FALSE}
 libs <- c("magrittr", "tidyverse", "knitr",
-          "lme4", "sjstats", "TMB", "pbkrtest")
+          "lme4", "sjstats", "TMB")
 lapply(libs, require, character.only = TRUE)
 load(file="ws_21_09_18.RData")
 ```
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 #### Table
 Digits and Words lists
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 span_nw_df %>%
   group_by(seq) %>%
   filter(row_number(seq) == 1) %>%
@@ -139,7 +139,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -205,7 +205,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -585,7 +585,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -650,12 +650,10 @@ span_size_nw_joined %>%
 ```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
 ggplot(span_size_df_joined, aes(x=age, y=span_size, shape = stimulus_type, linetype = stimulus_type))+
   geom_jitter(height = 0.25, width = 0.25) +
-  ggtitle('Span size by age') +
-  theme(plot.title = element_text(hjust = 0.5)) +
   labs(x = "Age in months", y = "Span size") +
   geom_smooth(method='lm', colour = 'black', size = 0.3) +
-  scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
-  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
+  scale_shape_manual(name = "", labels = c("Digits", "Words"), values = c(0, 3)) + 
+  scale_linetype_manual(name = "", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
 ```
 **Figure 1.** Span size by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added. 
 
@@ -680,7 +678,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -762,7 +760,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -810,12 +808,10 @@ span_tot_nw_joined %>%
 ```{r echo=FALSE, fig.width=7, fig.height=5, warning=FALSE, message=FALSE}
 ggplot(span_tot_df_joined, aes(x=age, y=span_tot, shape = stimulus_type, linetype = stimulus_type))+
   geom_jitter(height = 0.25, width = 0.25) +
-  ggtitle('Total Span by age') +
-  theme(plot.title = element_text(hjust = 0.5)) +
   labs(x = "Age in months", y = "Total Span") +
   geom_smooth(method='lm', colour = 'black', size = 0.3) +
-  scale_shape_manual(name = "List", labels = c("Digits", "Words"), values = c(0, 3)) + 
-  scale_linetype_manual(name = "List", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
+  scale_shape_manual(name = "", labels = c("Digits", "Words"), values = c(0, 3)) + 
+  scale_linetype_manual(name = "", labels = c("Digits", "Words"), values = c("solid", "dotted")) 
 ```
 **Figure 1.** Span Total by age for digit and word lists (25% of random noise was added at each y axis tick value to avoid overplotting). A regression line with 95% confidence interval was added. 
 
@@ -840,7 +836,7 @@ tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Ag
   (function(x) {
     p_values = p_value(mod, p.kr = TRUE)$p.value
     
-    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, 0.001, p_values)))
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
   }) %>%
   rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
   round_df(3) %>%
@@ -864,4 +860,420 @@ tibble(Observations = span_tot_df_joined %>% nrow(),
        `Conditional R2` = r2(mod)[[2]]) %>%
   round_df(3) %>%
   kable()
+```
+
+<br>
+
+## Comparison between model 1 (no interaction term) and model 2 (interaction term included) for Gary's data and Full dataset (SPAN_SIZE)
+
+<br>
+
+### Gary's data
+
+<br>
+
+#### Model 1 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+span_nw_df_2 %<>% na.omit()
+
+span_nw_df_2$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod1 <- lmer(span_size ~ stimulus_type + age + (1|id), data = span_nw_df_2)
+mod2 <- lmer(span_size ~ stimulus_type * age + (1|id), data = span_nw_df_2)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age"), 
+       Estimate = fixef(mod1)) %>%
+  cbind(confint(mod1) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod1, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod1), icc(mod1))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_nw_df_2 %>% nrow(),
+       `Marginal R2` = r2(mod1)[[1]],
+       `Conditional R2` = r2(mod1)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model 2 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod2)) %>%
+  cbind(confint(mod2) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod2, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod2), icc(mod2))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_nw_df_2 %>% nrow(),
+       `Marginal R2` = r2(mod2)[[1]],
+       `Conditional R2` = r2(mod2)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model comparison
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+comparison <- anova(mod1, mod2)
+comparison %>% as_tibble() %>% round_df(3) %>% kable()
+```
+
+<br>
+
+### Full dataset
+
+<br>
+
+#### Model 1 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+span_size_df_joined %<>% na.omit()
+
+span_size_df_joined$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod1 <- lmer(span_size ~ stimulus_type + age + (1|id), data = span_size_df_joined)
+mod2 <- lmer(span_size ~ stimulus_type * age + (1|id), data = span_size_df_joined)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age"), 
+       Estimate = fixef(mod1)) %>%
+  cbind(confint(mod1) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod1, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod1), icc(mod1))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_size_df_joined %>% nrow(),
+       `Marginal R2` = r2(mod1)[[1]],
+       `Conditional R2` = r2(mod1)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model 2 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod2)) %>%
+  cbind(confint(mod2) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod2, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod2), icc(mod2))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_size_df_joined %>% nrow(),
+       `Marginal R2` = r2(mod2)[[1]],
+       `Conditional R2` = r2(mod2)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model comparison
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+comparison <- anova(mod1, mod2)
+comparison %>% as_tibble() %>% round_df(3) %>% kable()
+```
+
+<br>
+
+## Comparison between model 1 (no interaction term) and model 2 (interaction term included) for Gary's data and Full dataset (TOTAL SPAN)
+
+<br>
+
+### Gary's data
+
+<br>
+
+#### Model 1 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+span_tot_nw_df_2 %<>% na.omit()
+
+span_tot_nw_df_2$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod1 <- lmer(span_tot ~ stimulus_type + age + (1|id), data = span_tot_nw_df_2)
+mod2 <- lmer(span_tot ~ stimulus_type * age + (1|id), data = span_tot_nw_df_2)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age"), 
+       Estimate = fixef(mod1)) %>%
+  cbind(confint(mod1) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod1, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod1), icc(mod1))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_nw_df_2 %>% nrow(),
+       `Marginal R2` = r2(mod1)[[1]],
+       `Conditional R2` = r2(mod1)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model 2 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod2)) %>%
+  cbind(confint(mod2) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod2, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod2), icc(mod2))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_nw_df_2 %>% nrow(),
+       `Marginal R2` = r2(mod2)[[1]],
+       `Conditional R2` = r2(mod2)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model comparison
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+comparison <- anova(mod1, mod2)
+comparison %>% as_tibble() %>% round_df(3) %>% kable()
+```
+
+<br>
+
+### Full dataset
+
+<br>
+
+#### Model 1 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+span_tot_df_joined %<>% na.omit()
+
+span_tot_df_joined$stimulus_type %<>%
+  as.factor() %>%
+  relevel(ref = "words")
+
+mod1 <- lmer(span_tot ~ stimulus_type + age + (1|id), data = span_tot_df_joined)
+mod2 <- lmer(span_tot ~ stimulus_type * age + (1|id), data = span_tot_df_joined)
+
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age"), 
+       Estimate = fixef(mod1)) %>%
+  cbind(confint(mod1) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod1, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod1), icc(mod1))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_df_joined %>% nrow(),
+       `Marginal R2` = r2(mod1)[[1]],
+       `Conditional R2` = r2(mod1)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model 2 output
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+tibble(Coefficient = c("Intercept", "Stimulus Type", "Age" , "Stimulus Type * Age"), 
+       Estimate = fixef(mod2)) %>%
+  cbind(confint(mod2) %>% 
+          as_tibble() %>% 
+          slice(3:n()) %>%
+          select_all(.funs = funs(paste0("CI ", .)))) %>%
+  (function(x) {
+    p_values = p_value(mod2, p.kr = TRUE)$p.value
+    
+    cbind(x, tibble(`p-value` = ifelse(p_values < 0.001, "<0.001", round(p_values, 3))))
+  }) %>%
+  rename(`Lower CI 95%` = `CI 2.5 %`, `Upper CI 95%` = `CI 97.5 %`) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(`Random effects` = c("σ2", "τ00 Child ID", "ICC Child ID"),
+       Value = c(re_var(mod2), icc(mod2))) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+tibble(Observations = span_tot_df_joined %>% nrow(),
+       `Marginal R2` = r2(mod2)[[1]],
+       `Conditional R2` = r2(mod2)[[2]]) %>%
+  round_df(3) %>%
+  kable()
+```
+
+<br>
+
+#### Model comparison
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+comparison <- anova(mod1, mod2)
+comparison %>% as_tibble() %>% round_df(3) %>% kable()
 ```
